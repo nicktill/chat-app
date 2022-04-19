@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, url_for, redirect, render_template
+from flask import Flask, request, abort, url_for, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -16,10 +16,31 @@ class userChatter(db.Model):
     email = db.Column(db.String(150), nullable=False)
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def default():
-    return render_template("index.html")
+    if request.method == "POST":
+        print("post request")
+        print(request.form)	
 
+        if "user" in request.form and "pass" in request.form:
+            print("checking if the user is one of our clients")	
+            if request.form["user"] in users:
+                print("user is one of our clients, checking password...")	
+                if users[request.form["user"]] == request.form["pass"]:
+                    print("password is correct")
+                    return curProfile
+                else:
+                    print("password is incorrect")
+                    abort(401)
+    else:
+        print("GET request")
+        print("checking if the user is one of our clients")
+        if username and username in users:
+            print("user is one of our clients, redirecting page to otherProfile...")
+            return otherProfile.format(username)
+        else:
+            print("user is NOT one of our clients, 404 page...")
+            abort(404)
 
 # @app.route("/login/", methods=["GET", "POST"])
 # def login_controller():
@@ -27,7 +48,8 @@ def default():
 
 @app.route("/register/", methods=["GET", "POST"])
 def register_controller():
-    if request.method == 'POST':
+    #if user is making a register post request (trying to register)
+    if request.method == 'POST': 
         username_ = request.form['username']
         email_ = request.form['email']
         password_ = request.form['password']
@@ -44,21 +66,43 @@ def register_controller():
             return redirect('/')
         except:
             return 'There was an issue adding your information to database'
+    
+    #if user is trying to get to register page (clicked register button)
     else:
         return render_template('register.html')
 
-    return redirect('/')
+@app.route("/profile/")
+@app.route("/profile/<username>")
+def profile(username=None):
+	if not username:
+		# if no profile specified, either:
+		#	* direct logged in users to their profile
+		#	* direct unlogged in users to the login page
+		if "username" in session:
+			return redirect(url_for("profile", username=session["username"]))
+		else:
+			return redirect(url_for("login_controller"))
+			
+	elif username in users:
+		# if specified, check to handle users looking up their own profile
+		if "username" in session and session["username"] == username:
+			return render_template("curProfile.html")
+		else:
+			return render_template("otherProfile.html", name=username)
+			
+	else:
+		# cant find profile
+		abort(404)
 
-    # else:
-    #     return redirect('/')
-
-
-# @app.route("/profile/<username>")
-# def profile(username=None):
-
-
-# @app.route("/logout/")
-# def unlogger():
+@app.route("/logout/")
+def unlogger():
+	# if logged in, log out, otherwise offer to log in
+	if "username" in session:
+		# note, here were calling the .clear() method for the python dictionary builtin
+		session.clear()
+		return render_template("logoutPage.html")
+	else:
+		return redirect(url_for("login_controller"))
 
 
 # @app.route("/new_message/", methods=["POST"])
