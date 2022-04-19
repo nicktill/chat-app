@@ -30,9 +30,10 @@ p {
 }
 
 .chatBox {
-    width: 500px;
+    width: 420px;
+    opacity: 75%;
     height: 325px;
-    border: 15px solid white;
+    border: 5px solid white;
     padding: 50px;
     margin: 20px;
 }
@@ -155,4 +156,15 @@ input {
 
 .inputBox {
     align-items: left;
+}
+
+.makeSmaller {
+    font-size: 2rem;
+    -webkit-text-stroke: 1px #d6f4f4;
+}
+
+
+.makeSmallest {
+    font-size: 2rem;
+    -webkit-text-stroke: 1px #d6f4f4;
 }

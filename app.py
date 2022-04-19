@@ -44,7 +44,7 @@ def login_controller():
     if "username" in request.form and "password" in request.form:
         print("checking if the user is one of our clients")	
         # if request.form["username"] in session && request.form["password"] in session:
-        if request.form["username"] in users :
+        if request.form["username"] in users:
                 # return render_template("chat_page.html", usernameID={usernameID})
                 return render_template("chat_page.html")
         else:
