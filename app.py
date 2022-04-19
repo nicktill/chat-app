@@ -1,6 +1,9 @@
+from urllib import response
 from flask import Flask, request, abort, url_for, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import tkinter
+from tkinter import messagebox
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db' 
@@ -33,12 +36,16 @@ def default():
 
 @app.route("/login/", methods=["GET", "POST"])
 def login_controller():
+    # grab userID from database as follows
+    # usernameID =  userChatter.query.order_by(userChatter.username).all()
     if request.method == "POST":
         print("post request")
     print(request.form)	
     if "username" in request.form and "password" in request.form:
         print("checking if the user is one of our clients")	
-        if request.form["username"] in users:
+        # if request.form["username"] in session && request.form["password"] in session:
+        if request.form["username"] in users :
+                # return render_template("chat_page.html", usernameID={usernameID})
                 return render_template("chat_page.html")
         else:
                 print("username is incorrect")
@@ -55,12 +62,17 @@ def register_controller():
         email_ = request.form['email']
         password_ = request.form['password']
         rePassword_ = request.form['rePassword']
-        addUserInfo = userChatter(
-            username=(username_),
-            email=(email_),
-            password=(password_),
-            repassword=(rePassword_)
-        )
+        if password_ == rePassword_:
+            addUserInfo = userChatter(
+                username=(username_),
+                email=(email_),
+                password=(password_),
+                repassword=(rePassword_)
+            )
+        # else:
+        #     messagebox.showinfo("Passwords do not match:", "Passwodrs must match in order to")
+        #     return redirect("/register/")
+       
         try:
             db.session.add(addUserInfo)
             db.session.commit()

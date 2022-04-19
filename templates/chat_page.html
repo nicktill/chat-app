@@ -5,14 +5,17 @@
 {% endblock %}
 
 {% block body %}
+
+{% if userChatterData %}
 <div class="alignLeft">
-    <p>Your Profile! Logged in as {{ username }}</p>
-    <h1>Chat Page</h1>
+    <h1>Your profile! Logged in as {{ username }}</h1>
+    <h1 class="coolAnimation">Chat Page</h1>
     <div class="chatBox">
 
     </div>
 
 </div>
+{% end if %}
 <br>
 <br>
 <!-- iterate through DB using jinja templates and display the blogTitle and blogAuthors if any on the index page -->
