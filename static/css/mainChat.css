@@ -11,6 +11,11 @@ h1 {
     font-size: 18px;
 }
 
+div {
+    padding-bottom: 2%;
+}
+
+
 
 * {
     margin: 0;
@@ -22,6 +27,7 @@ h1 {
 a {
     padding: 10px;
     text-decoration: none;
+    color: white;
 }
 
 p {
@@ -55,6 +61,13 @@ p {
     -webkit-user-select: none;
     touch-action: manipulation;
     margin: 10px;
+}
+
+.changeColor {
+    box-shadow: rgba(128, 72, 207, 0.2) 0 -25px 18px -14px inset, rgba(128, 72, 207, 0.2) 0 1px 2px, rgba(128, 72, 207, 0.2) 0 2px 4px, rgba(128, 72, 207, 0.2) 0 4px 8px, rgba(128, 72, 207, 0.2) 0 8px 16px, rgba(128, 72, 207, 0.2) 0 16px 32px;
+    background-color: #8952d7;
+
+
 }
 
 .button:hover {
