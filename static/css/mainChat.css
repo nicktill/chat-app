@@ -24,6 +24,18 @@ a {
     text-decoration: none;
 }
 
+p {
+    color: white;
+}
+
+.chatBox {
+    width: 500px;
+    height: 325px;
+    border: 15px solid white;
+    padding: 50px;
+    margin: 20px;
+}
+
 .button {
     background-color: #c2fbd7;
     border-radius: 100px;
