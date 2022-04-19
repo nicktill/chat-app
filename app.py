@@ -3,9 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db' 
+app.config['SQLALCHEMY_BINDS'] = {'chat': 'sqlite:///chat.db'} 
 db = SQLAlchemy(app)
 
+
+users = {"alice": "qwert", "bob": "asdfg", "charlie": "zxcvb"}
 
 class userChatter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -15,35 +18,33 @@ class userChatter(db.Model):
     repassword = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), nullable=False)
 
+class chatInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    chatMessage =  db.Column(db.String(150), nullable=False)
+    __bind_key__ = 'chat' 
+
+
 
 @app.route("/", methods=["GET", "POST"])
 def default():
+    print("redirecting to login_controller for the first time")
+    return redirect(url_for("login_controller"))
+ 
+
+@app.route("/login/", methods=["GET", "POST"])
+def login_controller():
     if request.method == "POST":
         print("post request")
-        print(request.form)	
-
-        if "user" in request.form and "pass" in request.form:
-            print("checking if the user is one of our clients")	
-            if request.form["user"] in users:
-                print("user is one of our clients, checking password...")	
-                if users[request.form["user"]] == request.form["pass"]:
-                    print("password is correct")
-                    return curProfile
-                else:
-                    print("password is incorrect")
-                    abort(401)
-    else:
-        print("GET request")
-        print("checking if the user is one of our clients")
-        if username and username in users:
-            print("user is one of our clients, redirecting page to otherProfile...")
-            return otherProfile.format(username)
+    print(request.form)	
+    if "username" in request.form and "password" in request.form:
+        print("checking if the user is one of our clients")	
+        if request.form["username"] in users:
+                return render_template("chat_page.html")
         else:
-            print("user is NOT one of our clients, 404 page...")
-            abort(404)
-
-# @app.route("/login/", methods=["GET", "POST"])
-# def login_controller():
+                print("username is incorrect")
+                abort(401)
+    else:
+        return render_template('loginPage.html')
 
 
 @app.route("/register/", methods=["GET", "POST"])
@@ -63,7 +64,7 @@ def register_controller():
         try:
             db.session.add(addUserInfo)
             db.session.commit()
-            return redirect('/')
+            return redirect('/login/')
         except:
             return 'There was an issue adding your information to database'
     
