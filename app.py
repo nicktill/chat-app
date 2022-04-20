@@ -16,7 +16,6 @@ class userChatter(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     username = db.Column(db.String(30), nullable=False)
     password = db.Column(db.String(150), nullable=False)
-    repassword = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), nullable=False)
 
 class chatInfo(db.Model):
@@ -35,16 +34,15 @@ def default():
 @app.route("/login/", methods=["GET", "POST"])
 def login_controller():
     # grab userID from database as follows
-    # usernameID =  userChatter.query.order_by(userChatter.username).all()
     if request.method == "POST":
         print("post request")
     print(request.form)	
     if "username" in request.form and "password" in request.form:
         print("checking if the user is one of our clients")	
-        # if request.form["username"] in session && request.form["password"] in session:
-        if request.form["username"] in users:
-                # return render_template("chat_page.html", usernameID={usernameID})
-                return render_template("chat_page.html")
+        userLogin = request.form["username"]
+        if userLogin in session:
+                return render_template("chat_page.html", usernameID={userLogin})
+                # return render_template("chat_page.html")
         else:
                 print("username is incorrect")
                 abort(401)
@@ -60,17 +58,15 @@ def register_controller():
         email_ = request.form['email']
         password_ = request.form['password']
         rePassword_ = request.form['rePassword']
-        if password_ == rePassword_:
-            addUserInfo = userChatter(
+        #if passwords dont match redirect to loginPage
+        if password_ != rePassword_: 
+            return redirect('/register/')
+        
+        addUserInfo = userChatter(
                 username=(username_),
                 email=(email_),
                 password=(password_),
-                repassword=(rePassword_)
             )
-        # else:
-        #     messagebox.showinfo("Passwords do not match:", "Passwodrs must match in order to")
-        #     return redirect("/register/")
-       
         try:
             db.session.add(addUserInfo)
             db.session.commit()
