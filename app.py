@@ -2,8 +2,6 @@ from urllib import response
 from flask import Flask, request, abort, url_for, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import tkinter
-from tkinter import messagebox
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db' 
