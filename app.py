@@ -54,6 +54,7 @@ def login_controller():
 
 @app.route("/register/", methods=["GET", "POST"])
 def register_controller():
+
     #if user is making a register post request (trying to register)
     if request.method == 'POST': 
         username_ = request.form['username']
@@ -63,7 +64,6 @@ def register_controller():
         #if passwords dont match redirect to loginPage
         if password_ != rePassword_:
             return redirect('/register/')
-        #e
         addUserInfo = userChatter(
                 username=(username_),
                 email=(email_),
