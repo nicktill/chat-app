@@ -1,3 +1,4 @@
+from ast import And
 from urllib import response
 from flask import Flask, request, abort, url_for, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy
@@ -33,21 +34,22 @@ def default():
 
 @app.route("/login/", methods=["GET", "POST"])
 def login_controller():
-    # grab userID from database as follows
-    if request.method == "POST":
-        print("post request")
-    print(request.form)	
-    if "username" in request.form and "password" in request.form:
-        print("checking if the user is one of our clients")	
-        userLogin = request.form["username"]
-        if userLogin in session:
-                return render_template("chat_page.html", usernameID={userLogin})
-                # return render_template("chat_page.html")
-        else:
-                print("username is incorrect")
+   	# first check if the user is already logged in
+    if "username" in session:
+                return redirect(url_for("profile", username=session["username"]))
+
+    # if not, and the incoming request is via POST try to log them in
+    elif request.method == "POST":
+        if request.form["username"] in users:
+            if users[request.form["user"]] == request.form["pass"]:
+                session["username"] = request.form["user"]
+                return redirect(url_for("profile", username=session["username"]))
+            else:
                 abort(401)
-    else:
-        return render_template('loginPage.html')
+
+        # if all else fails, offer to log them in
+    
+    return render_template("loginPage.html")
 
 
 @app.route("/register/", methods=["GET", "POST"])
@@ -59,9 +61,9 @@ def register_controller():
         password_ = request.form['password']
         rePassword_ = request.form['rePassword']
         #if passwords dont match redirect to loginPage
-        if password_ != rePassword_: 
+        if password_ != rePassword_:
             return redirect('/register/')
-        
+        #e
         addUserInfo = userChatter(
                 username=(username_),
                 email=(email_),
