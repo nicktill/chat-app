@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Chat Page</title>
+{% endblock %}
+
+{% block body %}
+<div class="alignLeft">
+    <h1>Logged in as</h1>
+    <h1 class="coolAnimation makeSmaller">Username Here</h1>
+    <h1 class="coolAnimation makeSmaller">Chat Page</h1><br>
+</div>
+<div class="alignLeft">
+    <br>
+    <h1 class="coolAnimation makeSmaller">Type Message: </h1>
+    <textarea id="message" name="story" rows="5" cols="33">
+    </textarea><br>
+    <input type="submit" value="New-Message"><br></br>
+</div>
+<div class="alignLeft">
+    <h1 class="coolAnimation makeSmaller">Chat Window: </h1>
+    <textarea id="output" name="story" rows="15" cols="75">
+    </textarea><br>
+</div><br>
+<a class="button changeColor" href="/login/">Logout Page</a>
+
+
+
+<br>
+<br>
+<!-- iterate through DB using jinja templates and display the blogTitle and blogAuthors if any on the index page -->
+{% endblock %}
