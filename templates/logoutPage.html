@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Login Page</title>
+{% endblock %}
+
+{% block body %}
+<form action="/login/" method="POST">
+    <input type="text" name="username" id="username">
+    <input type="text" name="password" id="password">
+    <input type="text" name="rePassword" id="repass">
+</form>
+<br>
+<br>
+<!-- iterate through DB using jinja templates and display the blogTitle and blogAuthors if any on the index page -->
+{% endblock %}

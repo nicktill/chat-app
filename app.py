@@ -10,14 +10,12 @@ app.config['SQLALCHEMY_BINDS'] = {'chat': 'sqlite:///chat.db'}
 db = SQLAlchemy(app)
 
 
-users = {"alice": "qwert", "bob": "asdfg", "charlie": "zxcvb"}
 
 class userChatter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    username = db.Column(db.String(30), nullable=False)
-    password = db.Column(db.String(150), nullable=False)
-    email = db.Column(db.String(150), nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(80), nullable=False)
 
 class chatInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,53 +30,39 @@ def default():
     return redirect(url_for("login_controller"))
  
 
+ 
 @app.route("/login/", methods=["GET", "POST"])
 def login_controller():
-   	# first check if the user is already logged in
-    if "username" in session:
-                return redirect(url_for("profile", username=session["username"]))
-
-    # if not, and the incoming request is via POST try to log them in
-    elif request.method == "POST":
-        if request.form["username"] in session:
-            if request.form["password"] in session:
-                session["username"] = request.form["username"]
-                return redirect(url_for("profile", username=session["username"]))
+    if request.method == "POST":
+        username = request.form['username']
+        password = request.form['password']
+        user = userChatter.query.filter_by(username=username).first()
+        if user and user.password == password:
+            session['username'] = username  
+            return redirect(url_for("profile", username=username))
         else:
-                abort(401)
-
-    # if all else fails, offer to log them in
-    return render_template("loginPage.html")
-
-
-@app.route("/register/", methods=["GET", "POST"])
-def register_controller():
-
-    #if user is making a register post request (trying to register)
-    if request.method == 'POST': 
-        username_ = request.form['username']
-        email_ = request.form['email']
-        password_ = request.form['password']
-        rePassword_ = request.form['rePassword']
-        #if passwords dont match redirect to loginPage
-        if password_ != rePassword_:
-            return redirect('/register/') #refresh page if the usernames do not match
-        addUserInfo = userChatter( #create object for userInfo
-                username=(username_),
-                email=(email_),
-                password=(password_),
-            )
-        try: #add userInfo object to DB
-            db.session.add(addUserInfo)
-            db.session.commit()
-            return redirect('/login/') #redirect login
-        except: #catch issues with adding information to db
-            return 'There was an issue adding your information to database'
-    
-    #if user is trying to get to register page (clicked register button)
+            return render_template("loginPage.html", error="Invalid username or password")
     else:
-        return render_template('register.html')
-
+        return render_template("loginPage.html")
+ 
+app.route("/register/", methods=["GET", "POST"]) 
+def register_controller():
+    # Check if the request method is a POST and if so add to database
+    if request.method == "POST":
+        username_ = request.form["user"]
+        email_ = request.form["email"]
+        password_ = request.form["pass"]
+        repassword_ = request.form["repass"]
+        if password_ == repassword_:
+            try:
+                new_user = userChatter(username=username_, email=email_, password=password_)
+                db.session.add(new_user)
+                db.session.commit()
+                return redirect(url_for("profile", username=username_))
+            except:
+                return "There was an issue adding your profile"
+    else:
+        return render_template("register.html")
 @app.route("/profile/")
 @app.route("/profile/<username>")
 def profile(username=None):
