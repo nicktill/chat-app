@@ -2,6 +2,15 @@ chat app utilizing python flask, jinja, sql-alchemy db, using json to populate t
 AJAX for stimulating requests
 
 Navigate to directory:
+
+```
+python3 
+```
+
+```
+> from app import db
+```
+
 ```
 python3 app.py
 ```
