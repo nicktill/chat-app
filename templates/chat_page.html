@@ -7,24 +7,29 @@
 {% block body %}
 <div class="alignLeft">
     <h1>Logged in as</h1>
-    <h1 class="coolAnimation makeSmaller">User: {{ user.username }} </h1>
+    <h1 id="usernameForAjax" class="coolAnimation makeSmaller">User: {{ user.username }} </h1>
     <h1 class="coolAnimation makeSmaller">Chat Page</h1><br>
 </div>
-<div class="alignLeft">
+
+<!-- MESSAGE BOX HERE -->
+<form id="message_submit">
+    <label class="coolAnimation makeSmaller" for="message">Chat: </label><br>
+    <textarea class="message" name="message" id="message" cols="30" rows="10"></textarea>
+    <input id="author" type="hidden" name="author" value="{{ user.username }}">
     <br>
-    <h1 class="coolAnimation makeSmaller">type message: </h1>
-    <textarea id="message" name="story" rows="5" cols="33">
-    </textarea><br>
-    <input type="submit" value="New-Message"><br></br>
+    <button id="new_message_submit" type="submit" form="message_submit">Send</button>
+</form>
+
+<!-- CHAT BOX HERE -->
+<label for="chat_window" class="coolAnimation makeSmaller alignLeft" id="chat_window_layout">Chat Window: </label>
+<div name="chat_window" id="chat_window">
+    {% for chat in chats %}
+    <p>{{ chat.author }}: {{ chat.message }}</p>
+    {% endfor %}
 </div>
-<div class="alignLeft">
-    <h1 class="coolAnimation makeSmaller">Chat Window: </h1>
-    <textarea id="output" name="story" rows="15" cols="75">
-    </textarea><br>
-</div><br>
+
+<!-- LOGIN PAGE REF -->
 <a class="button changeColor" href="/login/">Logout Page</a>
-
-
 
 <br>
 <br>
