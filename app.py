@@ -37,7 +37,6 @@ def login_controller():
         password = request.form['password']
         user = userChatter.query.filter_by(username=username).first()
         if user and user.password == password:
-            session['username'] = username  
             return redirect(url_for("profile", username=username))
         else:
             return render_template("loginPage.html", error="Invalid username or password")
@@ -62,7 +61,7 @@ def register_controller():
                 return "There was an issue adding your profile"
     else:
         return render_template("register.html")
-
+ 
  
 # @app.route("/login/", methods=["GET", "POST"])
 # def login_controller():
@@ -101,9 +100,9 @@ def register_controller():
 def profile(username=None):
     if username:
         user = userChatter.query.filter_by(username=username).first()
-        chats = chatInfo.query.order_by(chatInfo.date_created.desc().all())
+        chats = chatInfo.query.order_by(chatInfo.date_created.desc()).all()
         if user:
-            return render_template("chat_page.html", username=user, chatMessage=chats)
+            return render_template("chat_page.html", user=user, chatMessage=chats)
         else:
             return "specified user not found"
 
@@ -127,4 +126,5 @@ def unlogger():
 # def messages():
 
 if __name__ == "__main__":
+    app.secret_key = "super secret key"
     app.run(debug=True)
