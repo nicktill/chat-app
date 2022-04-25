@@ -7,11 +7,15 @@ Navigate to directory:
 python3 
 ```
 
+
+Create database
 ```
 > from app import db
 > db.create_all()
 ```
 
+
+Run App
 ```
 python3 app.py
 ```
