@@ -40,15 +40,14 @@ def login_controller():
 
     # if not, and the incoming request is via POST try to log them in
     elif request.method == "POST":
-        if request.form["username"] in users:
-            if users[request.form["user"]] == request.form["pass"]:
-                session["username"] = request.form["user"]
+        if request.form["username"] in session:
+            if request.form["password"] in session:
+                session["username"] = request.form["username"]
                 return redirect(url_for("profile", username=session["username"]))
-            else:
+        else:
                 abort(401)
 
-        # if all else fails, offer to log them in
-    
+    # if all else fails, offer to log them in
     return render_template("loginPage.html")
 
 
@@ -63,17 +62,17 @@ def register_controller():
         rePassword_ = request.form['rePassword']
         #if passwords dont match redirect to loginPage
         if password_ != rePassword_:
-            return redirect('/register/')
-        addUserInfo = userChatter(
+            return redirect('/register/') #refresh page if the usernames do not match
+        addUserInfo = userChatter( #create object for userInfo
                 username=(username_),
                 email=(email_),
                 password=(password_),
             )
-        try:
+        try: #add userInfo object to DB
             db.session.add(addUserInfo)
             db.session.commit()
-            return redirect('/login/')
-        except:
+            return redirect('/login/') #redirect login
+        except: #catch issues with adding information to db
             return 'There was an issue adding your information to database'
     
     #if user is trying to get to register page (clicked register button)
