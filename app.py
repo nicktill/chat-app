@@ -20,6 +20,7 @@ class userChatter(db.Model):
 class chatInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chatMessage =  db.Column(db.String(150), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     __bind_key__ = 'chat' 
 
 
@@ -28,9 +29,7 @@ class chatInfo(db.Model):
 def default():
     print("redirecting to login_controller for the first time")
     return redirect(url_for("login_controller"))
- 
 
- 
 @app.route("/login/", methods=["GET", "POST"])
 def login_controller():
     if request.method == "POST":
@@ -38,53 +37,74 @@ def login_controller():
         password = request.form['password']
         user = userChatter.query.filter_by(username=username).first()
         if user and user.password == password:
-            session['username'] = username  
             return redirect(url_for("profile", username=username))
         else:
             return render_template("loginPage.html", error="Invalid username or password")
     else:
         return render_template("loginPage.html")
  
-app.route("/register/", methods=["GET", "POST"]) 
+@app.route("/register/", methods=["GET", "POST"]) 
 def register_controller():
     # Check if the request method is a POST and if so add to database
     if request.method == "POST":
-        username_ = request.form["user"]
-        email_ = request.form["email"]
-        password_ = request.form["pass"]
-        repassword_ = request.form["repass"]
-        if password_ == repassword_:
+        user_username = request.form["username"]
+        user_email = request.form["email"]
+        user_password = request.form["password"]
+        user_repass = request.form["repassword"]
+        if user_password == user_repass:
             try:
-                new_user = userChatter(username=username_, email=email_, password=password_)
+                new_user = userChatter(username=user_username, email=user_email, password=user_password)
                 db.session.add(new_user)
                 db.session.commit()
-                return redirect(url_for("profile", username=username_))
+                return redirect(url_for("profile", username=user_username))
             except:
                 return "There was an issue adding your profile"
     else:
         return render_template("register.html")
-@app.route("/profile/")
+
+ 
+# @app.route("/login/", methods=["GET", "POST"])
+# def login_controller():
+#     if request.method == "POST":
+#         username = request.form['username']
+#         password = request.form['password']
+#         user = userChatter.query.filter_by(username=username).first()
+#         if user and user.password == password:
+#             session['username'] = username  
+#             return redirect(url_for("profile", username=username))
+#         else:
+#             return render_template("loginPage.html", error="Invalid username or password")
+#     else:
+#         return render_template("loginPage.html")
+ 
+# @app.route("/register/", methods=["GET", "POST"]) 
+# def register_controller():
+#     # Check if the request method is a POST and if so add to database
+#     if request.method == "POST":
+#         username_ = request.form["username"]
+#         email_ = request.form["email"]
+#         password_ = request.form["password"]
+#         repassword_ = request.form["repassword"]
+#         if password_ == repassword_:
+#             try:
+#                 userChatterInfo = userChatter(username=username_, email=email_, password=password_)
+#                 db.session.add(userChatterInfo)
+#                 db.session.commit()
+#                 return redirect(url_for("profile", username=username_))
+#             except:
+#                 return "There was an issue adding your profile"
+#     else:
+#         return render_template("register.html")
+
 @app.route("/profile/<username>")
 def profile(username=None):
-	if not username:
-		# if no profile specified, either:
-		#	* direct logged in users to their profile
-		#	* direct unlogged in users to the login page
-		if "username" in session:
-			return redirect(url_for("profile", username=session["username"]))
-		else:
-			return redirect(url_for("login_controller"))
-			
-	elif username in users:
-		# if specified, check to handle users looking up their own profile
-		if "username" in session and session["username"] == username:
-			return render_template("curProfile.html")
-		else:
-			return render_template("otherProfile.html", name=username)
-			
-	else:
-		# cant find profile
-		abort(404)
+    if username:
+        user = userChatter.query.filter_by(username=username).first()
+        if user:
+            return render_template("chat_page.html", username=user)
+        else:
+            return "specified user not found"
+
 
 @app.route("/logout/")
 def unlogger():
