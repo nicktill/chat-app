@@ -1,4 +1,4 @@
-chat app utilizing python flask, jinja, sql-alchemy db, using json to populate the chat
+chat app utilizing python flask, jinja, sql-alchemy db, using json to populate the chat, multiple sessions
 AJAX for stimulating requests
 
 Navigate to directory:
